@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Booked Trips - Madhya Pradesh Tourism</title>
+  <meta name="description" content="View and manage all your planned and booked trips across Madhya Pradesh.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .my-trips-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+    .page-header-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .trips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+    .trip-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .trip-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .trip-card-header {
+      position: relative;
+      height: 160px;
+    }
+    .trip-card-header img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .trip-status-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 0.35rem 0.85rem;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .badge-paid {
+      background: #10B981;
+      color: white;
+    }
+    .badge-created {
+      background: #F59E0B;
+      color: white;
+    }
+    .trip-card-body {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .trip-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: var(--text-primary);
+    }
+    .trip-date {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .trip-info-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .info-pill {
+      background: var(--bg-hover);
+      padding: 0.3rem 0.65rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .budget-progress-box {
+      background: var(--bg-hover);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .places-list-tags {
+      margin-bottom: 1.25rem;
+    }
+    .place-tag {
+      display: inline-block;
+      background: rgba(230, 81, 0, 0.08);
+      color: var(--primary-orange);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      margin-right: 0.35rem;
+      margin-bottom: 0.35rem;
+    }
+    .trip-card-footer {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px dashed var(--border-color);
+    }
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: var(--bg-card);
+      border: 2px dashed var(--border-color);
+      border-radius: 20px;
+      max-width: 600px;
+      margin: 2rem auto;
+    }
+    /* Receipt Modal */
+    .receipt-box {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 520px;
+      width: 90%;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       GLOBAL APP HEADER
+       ========================================== -->
+  <header class="app-header">
+    <div class="header-left">
+      <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSideMenu()" title="Open Navigation Menu">☰</button>
+      <div class="brand-logo" onclick="window.location.href='index.html'">
+        <img src="https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=100&q=80" alt="MP Tourism Logo">
+        <span>MP TOURISM</span>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <h2 style="font-size: 1.1rem; margin: 0; font-family: 'Outfit', sans-serif; color: var(--text-primary);">
+        🧳 My Booked Trips
+      </h2>
+    </div>
+
+    <div class="header-right">
+      <div class="profile-menu-container">
+        <button class="btn-auth btn-outline" id="authNavBtn" onclick="openAuthModal()">👤 Login / Signup</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       SIDEBAR MENU
+       ========================================== -->
+  <div class="side-menu-overlay" id="sideMenuOverlay" onclick="closeSideMenu()"></div>
+  <aside class="side-menu-drawer" id="sideMenuDrawer">
+    <div class="side-menu-header">
+      <div class="brand-logo">
+        <img src="https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=100&q=80" alt="MP Tourism">
+        <span>MP TOURISM</span>
+      </div>
+      <button class="side-menu-close" onclick="closeSideMenu()">✕</button>
+    </div>
+    <div class="side-menu-body">
+      <a href="index.html" class="side-nav-item">🏠 Home</a>
+      <a href="my-trips.html" class="side-nav-item active">🧳 My Trips</a>
+      <a href="index.html#locationsGrid" class="side-nav-item" onclick="closeSideMenu()">📍 All Destinations (20)</a>
+      <a href="budget.html" class="side-nav-item" onclick="closeSideMenu()">🧮 Budget Calculator</a>
+      <a href="place.html?id=1" class="side-nav-item" onclick="closeSideMenu()">🛕 Popular Attractions</a>
+      <a href="javascript:void(0)" class="side-nav-item" onclick="showToast('Madhya Pradesh Tourism - The Heart of Incredible India', 'info'); closeSideMenu();">ℹ️ About MP Tourism</a>
+      <a href="javascript:void(0)" class="side-nav-item" onclick="showToast('Support Helpline: 1800-233-7777 (Toll Free)', 'info'); closeSideMenu();">📞 Contact Support</a>
+    </div>
+    <div class="side-menu-footer">
+      <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">
+        The Heart of Incredible India<br>
+        <strong>Official Tourism Portal</strong>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==========================================
+       MAIN CONTENT CONTAINER
+       ========================================== -->
+  <main class="my-trips-container">
+    
+    <!-- Page Header Banner -->
+    <div class="page-header-box">
+      <div>
+        <h1 style="font-size: 1.85rem; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
+          🧳 My Booked & Planned Trips
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">
+          View all your customized itineraries, status updates, budget breakdowns and payment receipts in one place.
+        </p>
+      </div>
+      <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <span id="tripsCountBadge" style="background: rgba(230, 81, 0, 0.1); color: var(--primary-orange); font-weight: 700; padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.9rem;">
+          0 Trips Found
+        </span>
+        <button onclick="window.location.href='budget.html'" class="btn-auth btn-primary-orange" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">
+          + Plan New Trip
+        </button>
+      </div>
+    </div>
+
+    <!-- Trips Grid Container -->
+    <div id="tripsGrid" class="trips-grid">
+      <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">
+        <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">⏳</div>
+        <h3>Loading your trip history...</h3>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==========================================
+       RECEIPT & DETAILS MODAL
+       ========================================== -->
+  <div class="modal-overlay" id="receiptModal">
+    <div class="modal-box" style="max-width: 520px; text-align: left;">
+      <button class="modal-close" onclick="closeReceiptModal()">✕</button>
+      <div id="receiptModalContent">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       AUTH MODAL (LOGIN / SIGNUP)
+       ========================================== -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeAuthModal()">✕</button>
+      
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="loginTabBtn" onclick="switchAuthTab('login')">Login</div>
+        <div class="auth-tab" id="signupTabBtn" onclick="switchAuthTab('signup')">Sign Up</div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="loginEmail" placeholder="test@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-auth btn-primary-orange" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Login to Account</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signupForm" onsubmit="handleSignup(event)" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-control" id="signupFirstName" placeholder="John" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="signupLastName" placeholder="Doe" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="signupEmail" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp Number</label>
+          <input type="tel" class="form-control" id="signupWhatsapp" placeholder="9876543210" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="signupPassword" placeholder="Min 6 characters" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="signupConfirmPassword" placeholder="Re-enter password" required>
+        </div>
+        <button type="submit" class="btn-auth btn-primary-orange" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Shared API Client & AI Chat Widget -->
+  <script src="js/api.js"></script>
+  <script src="js/chat-widget.js"></script>
+
+  <!-- My Trips Logic -->
+  <script>
+    let loadedTrips = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Restore theme
+      const savedTheme = localStorage.getItem('mpt_theme');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+
+      checkAuthStatus();
+      loadUserTrips();
+    });
+
+    async function loadUserTrips() {
+      const container = document.getElementById('tripsGrid');
+
+      if (!API.isLoggedIn()) {
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1/-1;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+            <h2 style="margin-bottom: 0.5rem;">Authentication Required</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+              Please log in or create an account to view your booked and planned MP trips.
+            </p>
+            <button onclick="openAuthModal()" class="btn-auth btn-primary-orange" style="padding: 0.75rem 1.75rem; font-size: 1rem;">
+              👤 Login / Signup
+            </button>
+          </div>
+        `;
+        openAuthModal();
+        return;
+      }
+
+      try {
+        loadedTrips = await API.getMyTrips();
+        document.getElementById('tripsCountBadge').innerText = `${loadedTrips.length} ${loadedTrips.length === 1 ? 'Trip' : 'Trips'} Found`;
+
+        if (!loadedTrips || loadedTrips.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state" style="grid-column: 1/-1;">
+              <div style="font-size: 3.5rem; margin-bottom: 1rem;">🏞️</div>
+              <h2 style="margin-bottom: 0.5rem;">No Trips Planned Yet</h2>
+              <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                You haven't created or booked any trips yet. Explore our top 20 MP destinations and build your custom itinerary!
+              </p>
+              <button onclick="window.location.href='index.html'" class="btn-auth btn-primary-orange" style="padding: 0.75rem 1.75rem; font-size: 1rem;">
+                🌿 Explore Destinations
+              </button>
+            </div>
+          `;
+          return;
+        }
+
+        renderTrips(loadedTrips);
+      } catch (err) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--danger-color);">
+            <h3 style="color: var(--danger-color); margin-bottom: 0.5rem;">⚠️ Failed to Load Trips</h3>
+            <p style="color: var(--text-muted);">${err.message}</p>
+            <button onclick="loadUserTrips()" class="btn-auth btn-primary-orange" style="margin-top: 1rem;">Retry</button>
+          </div>
+        `;
+      }
+    }
+
+    function renderTrips(trips) {
+      const container = document.getElementById('tripsGrid');
+
+      container.innerHTML = trips.map(t => {
+        const isPaid = t.status === 'PAID';
+        const formattedDate = t.createdAt ? new Date(t.createdAt).toLocaleDateString('en-IN', {
+          day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        }) : 'Recent';
+
+        const placesList = t.places && t.places.length > 0
+          ? t.places.map(p => `<span class="place-tag">📍 ${p.placeName} (₹${p.cost})</span>`).join('')
+          : '<span style="font-size: 0.8rem; color: var(--text-muted);">No extra spots added yet</span>';
+
+        return `
+          <div class="trip-card">
+            <div class="trip-card-header">
+              <img src="${t.imageUrl || 'https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=800&q=80'}" alt="${t.placeName}">
+              <span class="trip-status-badge ${isPaid ? 'badge-paid' : 'badge-created'}">
+                ${isPaid ? '✅ Booked & Paid' : '⏳ Planned'}
+              </span>
+            </div>
+            
+            <div class="trip-card-body">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                  <h3 class="trip-title">${t.placeName} Trip</h3>
+                  <div class="trip-date">📅 Created on ${formattedDate}</div>
+                </div>
+                <span style="font-size: 0.82rem; font-weight: 700; color: var(--primary-orange); background: rgba(230,81,0,0.1); padding: 4px 10px; border-radius: 20px;">
+                  Trip #${t.tripId}
+                </span>
+              </div>
+
+              <div class="trip-info-pills">
+                <span class="info-pill">⏱️ ${t.days || 1} Days</span>
+                <span class="info-pill">👥 ${t.totalMembers || 1} Person(s) (${t.men || 0}M, ${t.women || 0}W, ${t.children || 0}C)</span>
+              </div>
+
+              <div class="budget-progress-box">
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">
+                  <span>Total Budget:</span>
+                  <span style="color: var(--primary-green);">₹${(t.budget || 0).toLocaleString('en-IN')}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);">
+                  <span>Amount Spent: ₹${(t.totalSpent || 0).toLocaleString('en-IN')}</span>
+                  <span>Remaining: ₹${(t.remainingBudget || 0).toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+
+              <div class="places-list-tags">
+                <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; color: var(--text-muted);">Included Attractions:</div>
+                ${placesList}
+              </div>
+
+              <div class="trip-card-footer">
+                ${isPaid ? `
+                  <button onclick="openReceiptModal(${t.tripId})" class="btn-auth btn-outline" style="width: 100%; padding: 0.65rem; border-color: #10B981; color: #10B981; font-weight: 700;">
+                    📄 View Payment Receipt & Details
+                  </button>
+                ` : `
+                  <button onclick="window.location.href='payment.html?tripId=${t.tripId}'" class="btn-auth btn-primary-orange" style="width: 100%; padding: 0.65rem; font-weight: 700;">
+                    💳 Continue to Payment (₹${(t.totalSpent > 0 ? t.totalSpent : t.budget).toLocaleString('en-IN')}) →
+                  </button>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openReceiptModal(tripId) {
+      const trip = loadedTrips.find(t => t.tripId === tripId);
+      if (!trip) return;
+
+      const content = document.getElementById('receiptModalContent');
+      const pay = trip.payment || {};
+      const payDate = pay.createdAt ? new Date(pay.createdAt).toLocaleString('en-IN') : new Date().toLocaleString('en-IN');
+
+      content.innerHTML = `
+        <div style="text-align: center; border-bottom: 2px dashed var(--border-color); padding-bottom: 1.25rem; margin-bottom: 1.25rem;">
+          <div style="font-size: 2.5rem; margin-bottom: 0.25rem;">✅</div>
+          <h3 style="color: #10B981; margin: 0 0 0.25rem 0;">Booking Payment Receipt</h3>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">Madhya Pradesh Tourism Official Confirmation</p>
+        </div>
+
+        <div style="background: var(--bg-hover); padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; font-size: 0.88rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">Transaction ID:</span>
+            <strong>${pay.transactionId || 'MPT-TXN-SUCCESS'}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">Payment Date:</span>
+            <span>${payDate}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">Payment Method:</span>
+            <span>${pay.paymentMethod || 'Razorpay Mock UPI'}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 800; color: #10B981; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-color);">
+            <span>Amount Paid:</span>
+            <span>₹${(pay.amount || trip.budget).toLocaleString('en-IN')}</span>
+          </div>
+        </div>
+
+        <div style="font-size: 0.9rem; margin-bottom: 1rem;">
+          <strong>Trip Summary:</strong>
+          <ul style="margin: 0.5rem 0 0 1.2rem; padding: 0; color: var(--text-muted); font-size: 0.85rem;">
+            <li>Destination: <strong>${trip.placeName}</strong></li>
+            <li>Duration: <strong>${trip.days} Days</strong></li>
+            <li>Members: <strong>${trip.totalMembers} Person(s)</strong></li>
+            <li>Attractions Included: <strong>${trip.places ? trip.places.length : 0}</strong></li>
+          </ul>
+        </div>
+
+        <button onclick="closeReceiptModal()" class="btn-auth btn-primary-orange" style="width: 100%; padding: 0.75rem;">
+          Close Receipt
+        </button>
+      `;
+
+      document.getElementById('receiptModal').classList.add('active');
+    }
+
+    function closeReceiptModal() {
+      document.getElementById('receiptModal').classList.remove('active');
+    }
+
+    /* --- Auth & Profile --- */
+    function checkAuthStatus() {
+      const user = API.getCurrentUser();
+      const container = document.querySelector('.profile-menu-container');
+      if (!container) return;
+
+      if (user && API.isLoggedIn()) {
+        const avatarUrl = user.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80';
+        const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Valued User';
+
+        container.innerHTML = `
+          <div class="user-profile-wrapper" style="position: relative;">
+            <button class="profile-trigger-btn" id="profileTriggerBtn" onclick="toggleProfileDropdown(event)">
+              <img src="${avatarUrl}" alt="${user.firstName}" class="profile-avatar">
+              <span class="profile-user-name">${user.firstName || 'Profile'}</span>
+              <span class="dropdown-arrow">▼</span>
+            </button>
+            <div class="profile-dropdown-menu" id="profileDropdownMenu">
+              <div class="dropdown-user-header">
+                <strong>${fullName}</strong>
+                <span style="font-size: 0.78rem; color: var(--text-muted);">${user.email || ''}</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <a href="my-trips.html" class="dropdown-item">🧳 My Booked Trips</a>
+              <a href="javascript:void(0)" onclick="handleLogout()" class="dropdown-item dropdown-logout">🚪 Logout</a>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `<button class="btn-auth btn-outline" onclick="openAuthModal()">👤 Login / Signup</button>`;
+      }
+    }
+
+    function toggleProfileDropdown(e) {
+      if (e) e.stopPropagation();
+      const dropdown = document.getElementById('profileDropdownMenu');
+      if (dropdown) dropdown.classList.toggle('active');
+    }
+
+    function handleLogout() {
+      API.logout();
+      showToast('Logged out successfully!', 'info');
+      setTimeout(() => window.location.reload(), 300);
+    }
+
+    function openAuthModal() {
+      document.getElementById('authModal').classList.add('active');
+    }
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('active');
+    }
+    function switchAuthTab(tab) {
+      if (tab === 'login') {
+        document.getElementById('loginTabBtn').classList.add('active');
+        document.getElementById('signupTabBtn').classList.remove('active');
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('signupForm').style.display = 'none';
+      } else {
+        document.getElementById('signupTabBtn').classList.add('active');
+        document.getElementById('loginTabBtn').classList.remove('active');
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('signupForm').style.display = 'block';
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      try {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const res = await API.login({ email, password });
+        showToast(`Welcome back, ${res.firstName}!`, 'success');
+        closeAuthModal();
+        checkAuthStatus();
+        loadUserTrips();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function handleSignup(e) {
+      e.preventDefault();
+      try {
+        const firstName = document.getElementById('signupFirstName').value;
+        const lastName = document.getElementById('signupLastName').value;
+        const email = document.getElementById('signupEmail').value;
+        const whatsapp = document.getElementById('signupWhatsapp').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+        if (password !== confirmPassword) {
+          showToast('Passwords do not match. Please try again.', 'error');
+          return;
+        }
+
+        const res = await API.signup({ firstName, lastName, email, whatsapp, password });
+        showToast(`Account created successfully! Welcome ${res.firstName}.`, 'success');
+        closeAuthModal();
+        checkAuthStatus();
+        loadUserTrips();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function toggleSideMenu() {
+      document.getElementById('sideMenuOverlay').classList.toggle('active');
+      document.getElementById('sideMenuDrawer').classList.toggle('active');
+    }
+    function closeSideMenu() {
+      document.getElementById('sideMenuOverlay').classList.remove('active');
+      document.getElementById('sideMenuDrawer').classList.remove('active');
+    }
+  </script>
+</body>
+</html>

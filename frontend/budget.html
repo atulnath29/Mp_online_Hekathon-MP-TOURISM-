@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget & Trip Calculator - MP Tourism</title>
+  <meta name="description" content="Calculate your MP Tourism trip budget based on family members, duration, and target destination.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==========================================
+       GLOBAL APP HEADER
+       ========================================== -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-logo" onclick="window.location.href='index.html'">
+        <img src="https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=100&q=80" alt="MP Tourism Logo">
+        <span>MP TOURISM</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <a href="index.html" style="font-weight: 600; color: var(--text-main);">← Back to Home</a>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       BUDGET FORM SECTION
+       ========================================== -->
+  <main class="container" style="max-width: 650px; padding-top: 3rem; padding-bottom: 4rem;">
+    
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <span style="background: rgba(230, 81, 0, 0.1); color: var(--primary-orange); padding: 0.35rem 1rem; border-radius: 50px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">
+        Step 1 of 3 • Trip Setup
+      </span>
+      <h1 style="font-size: 2.2rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">Plan Your MP Tour Budget</h1>
+      <p style="color: var(--text-muted);">Enter your travel budget, group size, and duration to receive custom spot recommendations</p>
+    </div>
+
+    <div style="background: var(--bg-card); padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border-color);">
+      <form id="budgetForm" onsubmit="handleTripSubmit(event)">
+        
+        <!-- Destination Selection -->
+        <div class="form-group">
+          <label class="form-label">Destination Location</label>
+          <select class="form-control" id="placeSelect" required style="font-weight: 600;">
+            <option value="" disabled selected>Select MP Tourist Location...</option>
+            <option value="Ujjain">Ujjain (Mahakal & Shipra)</option>
+            <option value="Gwalior">Gwalior (Forts & Royalty)</option>
+            <option value="Khajuraho">Khajuraho (UNESCO Temples)</option>
+            <option value="Sanchi">Sanchi (Buddhist Stupa)</option>
+            <option value="Pachmarhi">Pachmarhi (Queen of Satpura)</option>
+            <option value="Kanha National Park">Kanha National Park (Tiger Reserve)</option>
+            <option value="Bhopal">Bhopal (City of Lakes)</option>
+            <option value="Indore">Indore (Cleanest City & Food)</option>
+            <option value="Orchha">Orchha (Ram Raja & Forts)</option>
+            <option value="Omkareshwar">Omkareshwar (Jyotirlinga)</option>
+            <option value="Jabalpur">Jabalpur (Marble Rocks)</option>
+            <option value="Bhedaghat">Bhedaghat (Dhuandhar Waterfalls)</option>
+            <option value="Maheshwar">Maheshwar (Ahilya Fort & Silk)</option>
+            <option value="Shivpuri">Shivpuri (Scindia Chhatris)</option>
+            <option value="Satna">Satna (Maihar Shardadevi)</option>
+            <option value="Bawangaja">Bawangaja (Colossal Jain Statue)</option>
+            <option value="Mohadi Falls">Mohadi Falls (Gorge Waterfall)</option>
+            <option value="Patalpani Waterfall">Patalpani Waterfall (Monsoon Falls)</option>
+            <option value="Bandhavgarh National Park">Bandhavgarh National Park (Tigers)</option>
+            <option value="Pench National Park">Pench National Park (Mowgli Land)</option>
+          </select>
+        </div>
+
+        <!-- Total Budget -->
+        <div class="form-group">
+          <label class="form-label">Total Travel Budget (INR ₹)</label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--primary-orange);">₹</span>
+            <input type="number" class="form-control" id="tripBudget" placeholder="15000" min="1000" max="500000" step="500" required style="padding-left: 2.2rem; font-weight: 700; font-size: 1.1rem; color: var(--primary-orange);">
+          </div>
+          <small style="color: var(--text-muted); display: block; margin-top: 0.35rem;">Typical family budget ranges from ₹5,000 to ₹50,000</small>
+        </div>
+
+        <!-- Duration -->
+        <div class="form-group">
+          <label class="form-label">Duration of Stay (Days)</label>
+          <input type="number" class="form-control" id="tripDays" placeholder="2" min="1" max="30" value="2" required>
+        </div>
+
+        <!-- Travelers Count Grid -->
+        <div style="background: var(--bg-light); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+          <label class="form-label" style="margin-bottom: 0.75rem; color: var(--primary-green);">Group / Family Members</label>
+          
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+            <div>
+              <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Men (Adults)</label>
+              <input type="number" class="form-control" id="tripMen" min="0" value="2" required style="text-align: center;">
+            </div>
+            <div>
+              <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Women (Adults)</label>
+              <input type="number" class="form-control" id="tripWomen" min="0" value="2" required style="text-align: center;">
+            </div>
+            <div>
+              <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Children</label>
+              <input type="number" class="form-control" id="tripChildren" min="0" value="1" required style="text-align: center;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="submitTripBtn" class="btn-auth btn-primary-orange" style="width: 100%; padding: 0.9rem; font-size: 1.05rem; font-weight: 800; border-radius: 50px;">
+          Calculate & View Suggestions →
+        </button>
+
+      </form>
+    </div>
+
+  </main>
+
+  <!-- ==========================================
+       AUTH MODAL (LOGIN / SIGNUP)
+       ========================================== -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeAuthModal()">✕</button>
+      
+      <div style="text-align: center; margin-bottom: 1.25rem;">
+        <h3 style="color: var(--primary-orange);">Login Required</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Please login or create an account to calculate and save your trip budget</p>
+      </div>
+
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="loginTabBtn" onclick="switchAuthTab('login')">Login</div>
+        <div class="auth-tab" id="signupTabBtn" onclick="switchAuthTab('signup')">Sign Up</div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleAuthAndSubmitTrip(event, 'login')">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="loginEmail" placeholder="test@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-auth btn-primary-orange" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Login & Calculate Trip</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signupForm" onsubmit="handleAuthAndSubmitTrip(event, 'signup')" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-control" id="signupFirstName" placeholder="John" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="signupLastName" placeholder="Doe" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="signupEmail" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp Number</label>
+          <input type="tel" class="form-control" id="signupWhatsapp" placeholder="9876543210" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="signupPassword" placeholder="Min 6 characters" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="signupConfirmPassword" placeholder="Re-enter password" required>
+        </div>
+        <button type="submit" class="btn-auth btn-primary-orange" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Create Account & Calculate</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Shared API Client & AI Chat Widget -->
+  <script src="js/api.js"></script>
+  <script src="js/chat-widget.js"></script>
+
+  <!-- Budget Page Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Clean UI initialization only - ZERO API calls on page load
+      const urlParams = new URLSearchParams(window.location.search);
+      const placeParam = urlParams.get('place');
+
+      if (placeParam) {
+        const select = document.getElementById('placeSelect');
+        for (let i = 0; i < select.options.length; i++) {
+          if (select.options[i].value.toLowerCase() === placeParam.toLowerCase()) {
+            select.selectedIndex = i;
+            break;
+          }
+        }
+        if (select.selectedIndex === 0) {
+          const opt = new Option(placeParam, placeParam, true, true);
+          select.add(opt);
+        }
+      } else {
+        document.getElementById('placeSelect').selectedIndex = 1; // Default to Ujjain
+      }
+    });
+
+    async function handleTripSubmit(e) {
+      if (e) e.preventDefault();
+
+      if (!API.isLoggedIn()) {
+        showToast('Please login or create an account to save your trip budget.', 'info');
+        openAuthModal();
+        return;
+      }
+
+      const btn = document.getElementById('submitTripBtn');
+      btn.disabled = true;
+      btn.innerText = 'Calculating Trip Budget...';
+
+      try {
+        const placeName = document.getElementById('placeSelect').value;
+        const budget = parseFloat(document.getElementById('tripBudget').value);
+        const days = parseInt(document.getElementById('tripDays').value);
+        const men = parseInt(document.getElementById('tripMen').value) || 0;
+        const women = parseInt(document.getElementById('tripWomen').value) || 0;
+        const children = parseInt(document.getElementById('tripChildren').value) || 0;
+
+        if (!placeName) {
+          throw new Error('Please select a destination location.');
+        }
+        if (isNaN(budget) || budget <= 0) {
+          throw new Error('Please enter a valid budget amount.');
+        }
+
+        const tripData = {
+          placeName: placeName,
+          budget: budget,
+          days: days,
+          men: men,
+          women: women,
+          children: children
+        };
+
+        const response = await API.createTrip(tripData);
+
+        if (response && response.tripId) {
+          showToast('Trip created successfully! Redirecting to suggestions...', 'success');
+          setTimeout(() => {
+            window.location.href = `suggestions.html?tripId=${response.tripId}`;
+          }, 800);
+        } else {
+          throw new Error('Trip creation response missing trip ID.');
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+        btn.disabled = false;
+        btn.innerText = 'Calculate & View Suggestions →';
+      }
+    }
+
+    async function handleAuthAndSubmitTrip(e, type) {
+      e.preventDefault();
+      try {
+        if (type === 'login') {
+          const email = document.getElementById('loginEmail').value;
+          const password = document.getElementById('loginPassword').value;
+          await API.login({ email, password });
+          showToast('Login successful!', 'success');
+        } else {
+          const firstName = document.getElementById('signupFirstName').value;
+          const lastName = document.getElementById('signupLastName').value;
+          const email = document.getElementById('signupEmail').value;
+          const whatsapp = document.getElementById('signupWhatsapp').value;
+          const password = document.getElementById('signupPassword').value;
+          const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+          if (password !== confirmPassword) {
+            showToast('Passwords do not match. Please try again.', 'error');
+            return;
+          }
+
+          await API.signup({ firstName, lastName, email, whatsapp, password });
+          showToast('Account created successfully!', 'success');
+        }
+        closeAuthModal();
+        handleTripSubmit(null);
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Modal Control
+    function openAuthModal() {
+      document.getElementById('authModal').classList.add('active');
+    }
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('active');
+    }
+    function switchAuthTab(tab) {
+      if (tab === 'login') {
+        document.getElementById('loginTabBtn').classList.add('active');
+        document.getElementById('signupTabBtn').classList.remove('active');
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('signupForm').style.display = 'none';
+      } else {
+        document.getElementById('signupTabBtn').classList.add('active');
+        document.getElementById('loginTabBtn').classList.remove('active');
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('signupForm').style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
+

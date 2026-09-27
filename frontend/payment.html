@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment & Confirmation - MP Tourism</title>
+  <meta name="description" content="Review order summary, process payment, and confirm your MP Tourism trip booking.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==========================================
+       GLOBAL APP HEADER
+       ========================================== -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-logo" onclick="window.location.href='index.html'">
+        <img src="https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=100&q=80" alt="MP Tourism Logo">
+        <span>MP TOURISM</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <span id="userStatusHeader" style="font-weight: 600; font-size: 0.9rem; color: var(--primary-green);">🔒 Secure 256-Bit SSL Checkout</span>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       PAYMENT & SUMMARY CONTAINER
+       ========================================== -->
+  <main class="container" style="padding-top: 2.5rem; padding-bottom: 4rem;">
+    
+    <div style="margin-bottom: 2rem;">
+      <span style="background: rgba(46, 125, 50, 0.1); color: var(--primary-green); padding: 0.35rem 1rem; border-radius: 50px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">
+        Final Checkout • Step 4 of 4
+      </span>
+      <h1 style="font-size: 2.2rem; margin-top: 0.4rem; color: var(--text-main);">Order Summary & Payment</h1>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 340px; gap: 2rem;">
+      
+      <!-- Left Column: Order Breakdown & Payment Methods -->
+      <div>
+        
+        <!-- Trip Details Card -->
+        <div style="background: var(--bg-card); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.25rem; color: var(--primary-orange); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);">
+            📍 Destination & Group Details
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; font-size: 0.95rem;">
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">DESTINATION</span>
+              <strong id="summaryDestination" style="font-size: 1.1rem;">Ujjain</strong>
+            </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">GROUP SIZE</span>
+              <strong id="summaryGroupSize">5 Members (2M, 2W, 1C)</strong>
+            </div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">STAY DURATION</span>
+              <strong id="summaryDays">2 Days / 1 Night</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected Places Breakdown -->
+        <div style="background: var(--bg-card); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.25rem; color: var(--primary-orange); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);">
+            🛕 Selected Excursions & Attractions
+          </h3>
+          <div id="selectedPlacesList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <p style="color: var(--text-muted);">Loading selected spots...</p>
+          </div>
+        </div>
+
+        <!-- Selected Hotel Breakdown -->
+        <div style="background: var(--bg-card); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.25rem; color: var(--primary-orange); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);">
+            🏨 Selected Hotel Accommodation
+          </h3>
+          <div id="selectedHotelBox" style="display: flex; justify-content: space-between; align-items: center;">
+            <p style="color: var(--text-muted);">Loading selected hotel...</p>
+          </div>
+        </div>
+
+        <!-- Payment Method Selector & Pay Button -->
+        <div style="background: var(--bg-card); padding: 1.75rem; border-radius: var(--radius-md); border: 2px solid var(--primary-green); box-shadow: var(--shadow-md);">
+          <h3 style="font-size: 1.3rem; color: var(--primary-green); margin-bottom: 1rem;">💳 Choose Payment Method</h3>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem;">
+            <label style="background: var(--bg-light); border: 1.5px solid var(--primary-orange); padding: 0.75rem; border-radius: var(--radius-sm); cursor: pointer; text-align: center; font-weight: 700; font-size: 0.9rem;">
+              <input type="radio" name="payMethod" value="UPI - PhonePe / GPay" checked style="accent-color: var(--primary-orange);"> UPI / QR Code
+            </label>
+            <label style="background: var(--bg-light); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: var(--radius-sm); cursor: pointer; text-align: center; font-weight: 600; font-size: 0.9rem;">
+              <input type="radio" name="payMethod" value="Credit / Debit Card" style="accent-color: var(--primary-orange);"> Credit Card
+            </label>
+            <label style="background: var(--bg-light); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: var(--radius-sm); cursor: pointer; text-align: center; font-weight: 600; font-size: 0.9rem;">
+              <input type="radio" name="payMethod" value="NetBanking" style="accent-color: var(--primary-orange);"> NetBanking
+            </label>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 2px dashed var(--border-color); margin-bottom: 1.5rem;">
+            <div>
+              <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">TOTAL FINAL AMOUNT</span>
+              <h2 id="summaryTotalAmount" style="color: var(--primary-orange); font-size: 1.8rem; font-family: 'Outfit', sans-serif;">₹0</h2>
+            </div>
+            <button id="payNowBtn" onclick="initiatePaymentProcess()" class="btn-auth btn-primary-orange" style="padding: 0.9rem 2.5rem; font-size: 1.1rem; font-weight: 800; border-radius: 50px;">
+              Pay Now & Confirm Booking →
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Static Ad Banners & Promotions -->
+      <div>
+        <h3 style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1rem;">Official MP Tourism Offers</h3>
+
+        <!-- Ad Banner 1 -->
+        <div style="background: linear-gradient(135deg, #1b5e20, #2e7d32); color: white; padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; box-shadow: var(--shadow-sm);">
+          <span style="background: rgba(255,255,255,0.2); font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase;">Official Offer</span>
+          <h4 style="color: white; font-size: 1.15rem; margin-top: 0.5rem; margin-bottom: 0.35rem;">MP Tourism Taxi Booking</h4>
+          <p style="font-size: 0.82rem; color: #e8f5e9; margin-bottom: 0.75rem;">Get 15% cashback on government verified cabs across Ujjain, Indore & Bhopal.</p>
+          <span style="font-weight: 700; color: #ffe082; font-size: 0.85rem;">Use Code: MPTAXI15</span>
+        </div>
+
+        <!-- Ad Banner 2 -->
+        <div style="background: linear-gradient(135deg, #e65100, #ff6d00); color: white; padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; box-shadow: var(--shadow-sm);">
+          <span style="background: rgba(255,255,255,0.2); font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase;">Railway Pass</span>
+          <h4 style="color: white; font-size: 1.15rem; margin-top: 0.5rem; margin-bottom: 0.35rem;">MP Express Tourist Pass</h4>
+          <p style="font-size: 0.82rem; color: #fff3e0; margin-bottom: 0.75rem;">Unlimited 7-day rail access connecting Gwalior, Khajuraho & Bhopal.</p>
+          <span style="font-weight: 700; color: #ffffff; font-size: 0.85rem;">Know More →</span>
+        </div>
+
+        <!-- Ad Banner 3 -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md); text-align: center;">
+          <div style="font-size: 2rem; margin-bottom: 0.25rem;">🏛️</div>
+          <h4 style="font-size: 1rem; margin-bottom: 0.25rem;">MP Tourism Helpline</h4>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">24x7 Toll Free Tourist Assistance</p>
+          <strong style="color: var(--primary-orange); font-size: 1.05rem;">1800-233-7777</strong>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ==========================================
+       AUTH MODAL (LOGIN / SIGNUP)
+       ========================================== -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeAuthModal()">✕</button>
+      
+      <div style="text-align: center; margin-bottom: 1.25rem;">
+        <h3 style="color: var(--primary-orange);">Authentication Required</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Please login or signup to confirm your trip booking payment</p>
+      </div>
+
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="loginTabBtn" onclick="switchAuthTab('login')">Login</div>
+        <div class="auth-tab" id="signupTabBtn" onclick="switchAuthTab('signup')">Sign Up</div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleAuthAndPay(event, 'login')">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="loginEmail" placeholder="test@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-auth btn-primary-orange" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Login & Continue Payment</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signupForm" onsubmit="handleAuthAndPay(event, 'signup')" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-control" id="signupFirstName" placeholder="John" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="signupLastName" placeholder="Doe" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="signupEmail" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp Number</label>
+          <input type="tel" class="form-control" id="signupWhatsapp" placeholder="9876543210" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="signupPassword" placeholder="Min 6 characters" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="signupConfirmPassword" placeholder="Re-enter password" required>
+        </div>
+        <button type="submit" class="btn-auth btn-primary-orange" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Create Account & Pay</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- BOOKING SUCCESS MODAL -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-box" style="text-align: center; max-width: 480px;">
+      <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">🎉</div>
+      <h2 style="color: var(--primary-green); font-size: 1.8rem; margin-bottom: 0.5rem;">Booking Confirmed!</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">Your MP Tourism trip payment was processed successfully.</p>
+
+      <div style="background: var(--bg-light); border-radius: var(--radius-sm); padding: 1.25rem; border: 1px solid var(--border-color); text-align: left; font-size: 0.9rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+          <span style="color: var(--text-muted);">Transaction ID:</span>
+          <strong id="successTxId" style="color: var(--primary-orange);">MPT-TXN-12345</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+          <span style="color: var(--text-muted);">Amount Paid:</span>
+          <strong id="successAmount">₹0.00</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+          <span style="color: var(--text-muted);">Payment Method:</span>
+          <span id="successMethod">UPI</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted);">Trip Status:</span>
+          <span style="color: var(--primary-green); font-weight: 800;">PAID (CONFIRMED)</span>
+        </div>
+      </div>
+
+      <button onclick="finishBooking()" class="btn-auth btn-primary-orange" style="width: 100%; padding: 0.85rem; font-size: 1rem;">
+        Done • Back to Home
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Shared API Client & AI Chat Widget -->
+  <script src="js/api.js"></script>
+  <script src="js/chat-widget.js"></script>
+
+  <!-- Payment Page Script -->
+  <script>
+    let currentTripId = null;
+    let selectedHotelId = null;
+    let finalAmount = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      currentTripId = urlParams.get('tripId');
+      selectedHotelId = urlParams.get('hotelId');
+
+      if (!currentTripId) {
+        showToast('No trip ID specified. Redirecting to budget calculator...', 'error');
+        setTimeout(() => window.location.href = 'budget.html', 1500);
+        return;
+      }
+
+      loadOrderSummary();
+    });
+
+    async function loadOrderSummary() {
+      try {
+        const places = await API.getSuggestedPlaces(currentTripId);
+        
+        let spotsSpent = 0;
+        const addedSpotsHtml = places.filter(p => p.isAdded).map(p => {
+          spotsSpent += p.totalCostForFamily;
+          return `
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; padding: 0.4rem 0; border-bottom: 1px dashed var(--border-color);">
+              <span>🛕 ${p.name}</span>
+              <strong style="color: var(--primary-orange);">₹${p.totalCostForFamily.toLocaleString()}</strong>
+            </div>
+          `;
+        }).join('');
+
+        document.getElementById('selectedPlacesList').innerHTML = addedSpotsHtml || '<p style="color: var(--text-muted); font-size: 0.9rem;">No extra excursion spots added.</p>';
+
+        // Load Hotel details
+        let hotelCost = 0;
+        let hotelName = 'Not Selected';
+        if (selectedHotelId) {
+          const hotels = await API.getSuggestedHotels(currentTripId);
+          const hotel = hotels.find(h => h.id == selectedHotelId) || hotels[0];
+          if (hotel) {
+            hotelCost = hotel.totalStayCost || hotel.pricePerNight;
+            hotelName = hotel.hotelName;
+          }
+        }
+
+        document.getElementById('selectedHotelBox').innerHTML = `
+          <div>
+            <strong style="font-size: 1rem; color: var(--text-main);">🏨 ${hotelName}</strong>
+            <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Standard Accomodation Stay</span>
+          </div>
+          <strong style="color: var(--primary-orange); font-size: 1.05rem;">₹${hotelCost.toLocaleString()}</strong>
+        `;
+
+        finalAmount = spotsSpent + hotelCost;
+        if (finalAmount === 0) finalAmount = 1500; // Fallback estimate
+
+        document.getElementById('summaryTotalAmount').innerText = `₹${finalAmount.toLocaleString()}`;
+
+      } catch (err) {
+        showToast('Error loading order summary: ' + err.message, 'error');
+      }
+    }
+
+    function initiatePaymentProcess() {
+      if (!API.isLoggedIn()) {
+        showToast('Please login or signup to confirm payment', 'info');
+        openAuthModal();
+        return;
+      }
+      executePaymentCall();
+    }
+
+    async function executePaymentCall() {
+      const btn = document.getElementById('payNowBtn');
+      btn.disabled = true;
+      btn.innerText = 'Processing Payment...';
+
+      try {
+        const selectedMethod = document.querySelector('input[name="payMethod"]:checked')?.value || 'UPI - PhonePe';
+        const res = await API.processPayment(currentTripId, {
+          paymentMethod: selectedMethod,
+          amount: finalAmount
+        });
+
+        document.getElementById('successTxId').innerText = res.transactionId || 'MPT-TXN-SUCCESS';
+        document.getElementById('successAmount').innerText = `₹${(res.amount || finalAmount).toLocaleString()}`;
+        document.getElementById('successMethod').innerText = res.paymentMethod || selectedMethod;
+
+        document.getElementById('successModal').classList.add('active');
+      } catch (err) {
+        showToast(err.message, 'error');
+        btn.disabled = false;
+        btn.innerText = 'Pay Now & Confirm Booking →';
+      }
+    }
+
+    async function handleAuthAndPay(e, type) {
+      e.preventDefault();
+      try {
+        if (type === 'login') {
+          const email = document.getElementById('loginEmail').value;
+          const password = document.getElementById('loginPassword').value;
+          await API.login({ email, password });
+          showToast('Login successful!', 'success');
+        } else {
+          const firstName = document.getElementById('signupFirstName').value;
+          const lastName = document.getElementById('signupLastName').value;
+          const email = document.getElementById('signupEmail').value;
+          const whatsapp = document.getElementById('signupWhatsapp').value;
+          const password = document.getElementById('signupPassword').value;
+          const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+          if (password !== confirmPassword) {
+            showToast('Passwords do not match. Please try again.', 'error');
+            return;
+          }
+
+          await API.signup({ firstName, lastName, email, whatsapp, password });
+          showToast('Account created!', 'success');
+        }
+        closeAuthModal();
+        executePaymentCall();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Modal Controls
+    function openAuthModal() {
+      document.getElementById('authModal').classList.add('active');
+    }
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('active');
+    }
+    function switchAuthTab(tab) {
+      if (tab === 'login') {
+        document.getElementById('loginTabBtn').classList.add('active');
+        document.getElementById('signupTabBtn').classList.remove('active');
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('signupForm').style.display = 'none';
+      } else {
+        document.getElementById('signupTabBtn').classList.add('active');
+        document.getElementById('loginTabBtn').classList.remove('active');
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('signupForm').style.display = 'block';
+      }
+    }
+
+    function finishBooking() {
+      window.location.href = 'index.html';
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.innerHTML = `<span>${type === 'success' ? '✅' : '⚠️'}</span> <span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+  </script>
+</body>
+</html>

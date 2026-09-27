@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Place Details - Madhya Pradesh Tourism</title>
+  <meta name="description" content="Explore attraction gallery, history, nearby spots and hotels for your destination in Madhya Pradesh.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==========================================
+       GLOBAL APP HEADER
+       ========================================== -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-logo" onclick="window.location.href='index.html'">
+        <img src="https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=100&q=80" alt="MP Tourism Logo">
+        <span>MP TOURISM</span>
+      </div>
+    </div>
+
+    <div class="header-right" style="gap: 1rem;">
+      <a href="index.html" style="font-weight: 600; color: var(--text-main);">← Back to Destinations</a>
+      <button class="btn-auth btn-primary-orange" id="planTripHeaderBtn" onclick="goToBudgetPage()">Plan Trip Now</button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       HERO PLACE HEADER
+       ========================================== -->
+  <section id="placeHeroSection" style="position: relative; background: #212121; min-height: 400px; display: flex; align-items: flex-end; color: white; padding: 3rem 1.5rem;">
+    <div id="placeHeroBg" style="position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.6; filter: brightness(0.85);"></div>
+    <div class="container" style="position: relative; z-index: 2;">
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;" id="placeBadgesContainer">
+        <span style="background: var(--primary-orange); color: white; padding: 0.25rem 0.75rem; border-radius: 50px; font-weight: 700; font-size: 0.85rem;" id="placeCategoryBadge">Spiritual</span>
+        <span style="background: rgba(255, 179, 0, 0.9); color: #212121; padding: 0.25rem 0.75rem; border-radius: 50px; font-weight: 800; font-size: 0.85rem;" id="placeRatingBadge">⭐ 9.8/10</span>
+      </div>
+      <h1 id="placeTitle" style="font-size: clamp(2.2rem, 5vw, 3.8rem); color: #ffffff; text-shadow: 0 4px 16px rgba(0,0,0,0.5);">Loading Destination...</h1>
+      <p id="placeTagline" style="font-size: 1.25rem; color: #ffe082; font-weight: 600; margin-top: 0.25rem; text-shadow: 0 2px 8px rgba(0,0,0,0.5);"></p>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       PLACE DETAILS & ATTRACTION GALLERY
+       ========================================== -->
+  <main class="container" style="padding-top: 2.5rem; padding-bottom: 4rem;">
+    
+    <!-- Action Bar & Best Time -->
+    <div style="background: var(--bg-card); border-radius: var(--radius-md); padding: 1.5rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; margin-bottom: 2.5rem;">
+      <div>
+        <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Best Season to Visit</span>
+        <h4 id="placeBestTime" style="color: var(--primary-green); font-size: 1.15rem;">October to March</h4>
+      </div>
+      
+      <div style="display: flex; gap: 1rem;">
+        <button class="btn-auth btn-primary-orange" style="padding: 0.75rem 2rem; font-size: 1rem; border-radius: var(--radius-full);" onclick="goToBudgetPage()">
+          🚀 Plan Trip to <span class="place-name-btn">this Destination</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Overview Description -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.75rem; margin-bottom: 0.75rem; color: var(--primary-orange);">About Destination</h2>
+      <p id="placeDescription" style="font-size: 1.05rem; color: var(--text-main); line-height: 1.7; background: var(--bg-card); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+        Loading destination description...
+      </p>
+    </section>
+
+    <!-- Photo Spots & Attraction Gallery -->
+    <section style="margin-bottom: 3rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div>
+          <h2 style="font-size: 1.75rem; color: var(--text-main);">Famous Attractions & Photo Spots</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Click any attraction image to view story, timings, and entry details</p>
+        </div>
+      </div>
+
+      <div class="grid-3" id="attractionsGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- Nearby Places Section -->
+    <section style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.75rem; margin-bottom: 1.25rem; color: var(--primary-green);">Nearby Excursions</h2>
+      <div class="grid-3" id="nearbyGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- Bottom Call To Action -->
+    <div style="background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-dark)); color: white; padding: 2.5rem 1.5rem; border-radius: var(--radius-lg); text-align: center; box-shadow: var(--shadow-md);">
+      <h2 style="color: white; font-size: 2rem; margin-bottom: 0.75rem;">Ready to visit <span class="place-name-btn">Destination</span>?</h2>
+      <p style="font-size: 1.1rem; color: #ffe082; max-width: 650px; margin: 0 auto 1.5rem;">
+        Customize your family size, budget, select nearby spots and get instant affordable hotel recommendations!
+      </p>
+      <button onclick="goToBudgetPage()" class="btn-auth" style="background: white; color: var(--primary-orange); padding: 0.85rem 2.25rem; font-size: 1.05rem; font-weight: 800; border-radius: 50px;">
+        Start Customizing Trip Plan →
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Attraction Story Detail Modal / Side Panel -->
+  <div class="modal-overlay" id="attractionModal">
+    <div class="modal-box" style="max-width: 550px;">
+      <button class="modal-close" onclick="closeAttractionModal()">✕</button>
+      <img id="attractionModalImg" src="" alt="Attraction" style="width: 100%; height: 220px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 1rem;">
+      <h3 id="attractionModalTitle" style="font-size: 1.4rem; color: var(--primary-orange); margin-bottom: 0.5rem;"></h3>
+      <div style="display: flex; gap: 1rem; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        <span>🕒 <strong id="attractionModalTimings">6:00 AM - 6:00 PM</strong></span>
+        <span>🎟️ <strong id="attractionModalFee">Free</strong></span>
+      </div>
+      <p id="attractionModalStory" style="font-size: 0.95rem; color: var(--text-main); line-height: 1.6; margin-bottom: 1.5rem;"></p>
+      <button class="btn-auth btn-primary-orange" style="width: 100%;" onclick="closeAttractionModal()">Close Details</button>
+    </div>
+  </div>
+
+  <!-- Shared API Client & AI Chat Widget -->
+  <script src="js/api.js"></script>
+  <script src="js/chat-widget.js"></script>
+
+  <!-- Page Details Script -->
+  <script>
+    let currentLocation = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const placeId = urlParams.get('id');
+      const placeName = urlParams.get('name');
+
+      if (placeId) {
+        fetchPlaceDetailsById(placeId);
+      } else if (placeName) {
+        fetchPlaceDetailsByName(placeName);
+      } else {
+        fetchPlaceDetailsById(1); // Default to Ujjain
+      }
+    });
+
+    async function fetchPlaceDetailsById(id) {
+      try {
+        currentLocation = await API.getLocationById(id);
+        renderPlaceDetails(currentLocation);
+      } catch (err) {
+        console.warn("Location ID fetch error, falling back to all locations list search...", err);
+        fetchPlaceDetailsByName("Ujjain");
+      }
+    }
+
+    async function fetchPlaceDetailsByName(name) {
+      try {
+        const locations = await API.getLocations();
+        currentLocation = locations.find(l => l.name.toLowerCase() === name.toLowerCase()) || locations[0];
+        renderPlaceDetails(currentLocation);
+      } catch (err) {
+        alert("Failed to load place details: " + err.message);
+      }
+    }
+
+    function renderPlaceDetails(loc) {
+      if (!loc) return;
+
+      document.title = `${loc.name} - MP Tourism Details`;
+      document.getElementById('placeTitle').innerText = loc.name;
+      document.getElementById('placeTagline').innerText = loc.tagline || 'Heart of Incredible India';
+      document.getElementById('placeDescription').innerText = loc.shortDescription || 'Discover beautiful attractions, culture and heritage.';
+      document.getElementById('placeCategoryBadge').innerText = loc.category || 'Tourist Spot';
+      document.getElementById('placeRatingBadge').innerText = `⭐ ${loc.rating || 4.8}/10`;
+      document.getElementById('placeBestTime').innerText = loc.bestTime || 'October to March';
+
+      document.querySelectorAll('.place-name-btn').forEach(el => el.innerText = loc.name);
+
+      if (loc.imageUrl) {
+        document.getElementById('placeHeroBg').style.backgroundImage = `url('${loc.imageUrl}')`;
+      }
+
+      // Render Attractions / Photo Spots
+      const attractionsGrid = document.getElementById('attractionsGrid');
+      if (loc.nearbyPlaces && loc.nearbyPlaces.length > 0) {
+        attractionsGrid.innerHTML = loc.nearbyPlaces.map(spot => `
+          <div class="location-card" onclick="openAttractionModal('${escapeHtml(spot.name)}', '${escapeHtml(spot.imageUrl)}', '${escapeHtml(spot.description)}', '6:00 AM - 7:00 PM', '₹${spot.estimatedCostPerPerson}/person')">
+            <div class="card-img-wrapper" style="height: 180px;">
+              <img src="${spot.imageUrl || 'https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=600&q=80'}" alt="${spot.name}">
+              <span class="card-badge" style="background: rgba(230, 81, 0, 0.9);">${spot.category || 'Spot'}</span>
+            </div>
+            <div class="card-content">
+              <h4 style="font-size: 1.1rem; margin-bottom: 0.35rem;">${spot.name}</h4>
+              <p class="card-desc" style="font-size: 0.85rem;">${spot.description || 'Explore this attraction during your visit.'}</p>
+              <div class="card-footer">
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary-green);">📍 ${spot.distanceKm || 2.5} km away</span>
+                <span style="font-size: 0.85rem; font-weight: 800; color: var(--primary-orange);">₹${spot.estimatedCostPerPerson}/person</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        attractionsGrid.innerHTML = `<p style="color: var(--text-muted);">Attraction details available on trip planning.</p>`;
+      }
+
+      // Render Nearby Excursions
+      const nearbyGrid = document.getElementById('nearbyGrid');
+      if (loc.nearbyPlaces && loc.nearbyPlaces.length > 0) {
+        nearbyGrid.innerHTML = loc.nearbyPlaces.map(item => `
+          <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; gap: 1rem; align-items: center;">
+            <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=200&q=80'}" alt="${item.name}" style="width: 70px; height: 70px; border-radius: var(--radius-sm); object-fit: cover;">
+            <div>
+              <h4 style="font-size: 1.05rem; margin-bottom: 0.2rem;">${item.name}</h4>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.3rem;">${item.category} • ${item.distanceKm} km</p>
+              <span style="font-weight: 700; color: var(--primary-orange); font-size: 0.85rem;">Est. ₹${item.estimatedCostPerPerson}/person</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function openAttractionModal(title, img, story, timings, fee) {
+      document.getElementById('attractionModalTitle').innerText = title;
+      document.getElementById('attractionModalImg').src = img || 'https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=800&q=80';
+      document.getElementById('attractionModalStory').innerText = story || 'Explore the rich history and beauty of this location.';
+      document.getElementById('attractionModalTimings').innerText = timings || '6:00 AM - 7:00 PM';
+      document.getElementById('attractionModalFee').innerText = fee || 'Free';
+      document.getElementById('attractionModal').classList.add('active');
+    }
+
+    function closeAttractionModal() {
+      document.getElementById('attractionModal').classList.remove('active');
+    }
+
+    function goToBudgetPage() {
+      const pName = currentLocation ? currentLocation.name : 'Ujjain';
+      window.location.href = `budget.html?place=${encodeURIComponent(pName)}`;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

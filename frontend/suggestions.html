@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Place Suggestions - MP Tourism</title>
+  <meta name="description" content="Select affordable nearby spots for your MP trip with real-time remaining budget updates.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==========================================
+       GLOBAL APP HEADER
+       ========================================== -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-logo" onclick="window.location.href='index.html'">
+        <img src="https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=100&q=80" alt="MP Tourism Logo">
+        <span>MP TOURISM</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <a href="budget.html" style="font-weight: 600; color: var(--text-main);">← Edit Trip Setup</a>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       REAL-TIME BUDGET BAR HEADER
+       ========================================== -->
+  <section style="position: sticky; top: 62px; z-index: 900; background: var(--bg-card); border-bottom: 2px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 1rem 1.5rem;">
+    <div class="container" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; padding: 0;">
+      <div>
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary-orange); text-transform: uppercase;">Step 2 of 3 • Add Excursions</span>
+        <h2 id="tripDestinationTitle" style="font-size: 1.35rem; color: var(--text-main);">Destination: Loading...</h2>
+      </div>
+
+      <!-- Real-Time Budget Tracker Cards -->
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <div style="background: var(--bg-light); padding: 0.5rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center;">
+          <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: block;">TOTAL BUDGET</span>
+          <strong id="barTotalBudget" style="font-size: 1.15rem; color: var(--text-main);">₹0</strong>
+        </div>
+
+        <div style="background: var(--bg-light); padding: 0.5rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center;">
+          <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: block;">SPENT ON SPOTS</span>
+          <strong id="barTotalSpent" style="font-size: 1.15rem; color: var(--primary-orange);">₹0</strong>
+        </div>
+
+        <div style="background: rgba(46, 125, 50, 0.1); padding: 0.5rem 1.25rem; border-radius: var(--radius-sm); border: 1.5px solid var(--primary-green); text-align: center;">
+          <span style="font-size: 0.75rem; color: var(--primary-green); font-weight: 700; display: block;">REMAINING BUDGET</span>
+          <strong id="barRemainingBudget" style="font-size: 1.25rem; color: var(--primary-green);">₹0</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SUGGESTED PLACES LIST
+       ========================================== -->
+  <main class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h2 style="font-size: 1.6rem; color: var(--text-main);">Nearby Spots Within Your Budget</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Costs are calculated for your entire family group. Use <strong>+ Add</strong> or <strong>- Remove</strong> to update remaining budget live!</p>
+      </div>
+
+      <button onclick="goToHotelsPage()" class="btn-auth btn-primary-orange" style="padding: 0.75rem 1.75rem; font-size: 0.95rem; border-radius: 50px;">
+        Next: View Hotel Suggestions →
+      </button>
+    </div>
+
+    <!-- Suggestions Container -->
+    <div id="suggestionsList" style="display: flex; flex-direction: column; gap: 1.25rem;">
+      <div style="text-align: center; padding: 3rem; background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border-color);">
+        ⏳ Calculating spot costs and filtering by remaining budget...
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Shared API Client & AI Chat Widget -->
+  <script src="js/api.js"></script>
+  <script src="js/chat-widget.js"></script>
+
+  <!-- Suggestions Page Script -->
+  <script>
+    let currentTripId = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      currentTripId = urlParams.get('tripId');
+
+      if (!currentTripId) {
+        showToast('No trip ID specified. Redirecting to budget calculator...', 'error');
+        setTimeout(() => window.location.href = 'budget.html', 1500);
+        return;
+      }
+
+      loadSuggestedPlaces();
+    });
+
+    async function loadSuggestedPlaces() {
+      const list = document.getElementById('suggestionsList');
+      try {
+        const places = await API.getSuggestedPlaces(currentTripId);
+        renderSuggestions(places);
+      } catch (err) {
+        list.innerHTML = `
+          <div style="text-align: center; padding: 3rem; background: var(--bg-card); border-radius: 14px; border: 1px solid var(--danger-color);">
+            <h3 style="color: var(--danger-color); margin-bottom: 0.5rem;">⚠️ Error Loading Suggestions</h3>
+            <p style="color: var(--text-muted);">${err.message}</p>
+            <button onclick="loadSuggestedPlaces()" class="btn-auth btn-primary-orange" style="margin-top: 1rem;">Retry</button>
+          </div>
+        `;
+      }
+    }
+
+    function renderSuggestions(places) {
+      const list = document.getElementById('suggestionsList');
+
+      if (!places || places.length === 0) {
+        list.innerHTML = `
+          <div style="text-align: center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <h3 style="margin-bottom: 0.5rem; color: var(--primary-orange);">No Spots Fit Remaining Budget</h3>
+            <p style="color: var(--text-muted);">You have reached your budget limit or all available nearby spots are added.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Calculate spent and remaining budget dynamically
+      let totalSpent = 0;
+      places.forEach(p => {
+        if (p.isAdded) {
+          totalSpent += p.totalCostForFamily;
+        }
+      });
+
+      // Update Header Bar
+      document.getElementById('barTotalSpent').innerText = `₹${totalSpent.toLocaleString()}`;
+
+      list.innerHTML = places.map(spot => {
+        const isAdded = spot.isAdded;
+        return `
+          <div style="background: var(--bg-card); border-radius: var(--radius-md); padding: 1.25rem; border: 1px solid ${isAdded ? 'var(--primary-green)' : 'var(--border-color)'}; box-shadow: var(--shadow-sm); display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: center; justify-content: space-between; transition: var(--transition-fast);">
+            
+            <div style="display: flex; gap: 1.25rem; align-items: center; flex: 1; min-width: 280px;">
+              <img src="${spot.imageUrl || 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=300&q=80'}" alt="${spot.name}" style="width: 100px; height: 90px; border-radius: var(--radius-sm); object-fit: cover;">
+              <div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem;">
+                  <span style="background: rgba(230,81,0,0.1); color: var(--primary-orange); font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 4px;">${spot.category || 'Spot'}</span>
+                  <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">📍 ${spot.distanceKm} km away</span>
+                </div>
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.25rem;">${spot.name}</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${spot.description || 'Famous attraction for sightseeing.'}</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1.5rem; align-items: center; justify-content: flex-end; flex-wrap: wrap;">
+              <div style="text-align: right;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: block;">FAMILY TOTAL COST</span>
+                <strong style="font-size: 1.25rem; color: var(--primary-orange);">₹${spot.totalCostForFamily.toLocaleString()}</strong>
+                <span style="font-size: 0.75rem; color: var(--text-light); display: block;">(₹${spot.estimatedCostPerPerson}/person)</span>
+              </div>
+
+              <div>
+                ${isAdded ? `
+                  <button onclick="removePlace(${spot.id})" class="btn-auth" style="background: #ffebee; color: var(--danger-color); border: 1px solid var(--danger-color); padding: 0.6rem 1.25rem; font-weight: 700;">
+                    - Remove Spot
+                  </button>
+                ` : `
+                  <button onclick="addPlace(${spot.id})" class="btn-auth btn-primary-orange" style="padding: 0.6rem 1.25rem; font-weight: 700;">
+                    + Add Spot
+                  </button>
+                `}
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function addPlace(placeId) {
+      try {
+        const res = await API.addPlaceToTrip(currentTripId, placeId);
+        showToast(`Added ${res.placeName || 'spot'}! Remaining budget: ₹${res.remainingBudget.toLocaleString()}`, 'success');
+        
+        // Update header budget
+        document.getElementById('barRemainingBudget').innerText = `₹${res.remainingBudget.toLocaleString()}`;
+        
+        // Reload list to update buttons and budget
+        loadSuggestedPlaces();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function removePlace(placeId) {
+      try {
+        const res = await API.removePlaceFromTrip(currentTripId, placeId);
+        showToast(`Spot removed! Remaining budget restored to: ₹${res.remainingBudget.toLocaleString()}`, 'info');
+        
+        // Update header budget
+        document.getElementById('barRemainingBudget').innerText = `₹${res.remainingBudget.toLocaleString()}`;
+        
+        // Reload list
+        loadSuggestedPlaces();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function goToHotelsPage() {
+      window.location.href = `hotels.html?tripId=${currentTripId}`;
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.innerHTML = `<span>${type === 'success' ? '✅' : '⚠️'}</span> <span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+  </script>
+</body>
+</html>

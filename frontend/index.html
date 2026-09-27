@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Madhya Pradesh Tourism - Explore Top 20 Destinations</title>
+  <meta name="description" content="Explore Madhya Pradesh - The Heart of Incredible India. Discover 20 top destinations including Ujjain, Khajuraho, Gwalior, Kanha, Bhopal, Indore, and plan custom trips.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet.js Map CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==========================================
+       GLOBAL APP HEADER
+       ========================================== -->
+  <header class="app-header">
+    <div class="header-left">
+      <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSideMenu()" title="Open Navigation Menu">☰</button>
+      <div class="brand-logo" onclick="window.location.href='index.html'">
+        <img src="https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=100&q=80" alt="MP Tourism Logo">
+        <span>MP TOURISM</span>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="homeSearchInput" placeholder="Search 20 MP destinations (e.g. Ujjain, Khajuraho, Pachmarhi)..." autocomplete="off">
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="profile-menu-container">
+        <button class="btn-auth btn-outline" id="authNavBtn" onclick="openAuthModal()">👤 Login / Signup</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       SLIDE-OUT SIDEBAR DRAWER & OVERLAY
+       ========================================== -->
+  <div class="side-menu-overlay" id="sideMenuOverlay" onclick="closeSideMenu()"></div>
+  <aside class="side-menu-drawer" id="sideMenuDrawer">
+    <div class="side-menu-header">
+      <div class="brand-logo">
+        <img src="https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=100&q=80" alt="MP Tourism">
+        <span>MP TOURISM</span>
+      </div>
+      <button class="side-menu-close" onclick="closeSideMenu()">✕</button>
+    </div>
+    <div class="side-menu-body">
+      <a href="index.html" class="side-nav-item active">🏠 Home</a>
+      <a href="my-trips.html" class="side-nav-item" onclick="closeSideMenu()">🧳 My Trips</a>
+      <a href="index.html#locationsGrid" class="side-nav-item" onclick="closeSideMenu()">📍 All Destinations (20)</a>
+      <a href="budget.html" class="side-nav-item" onclick="closeSideMenu()">🧮 Budget Calculator</a>
+      <a href="place.html?id=1" class="side-nav-item" onclick="closeSideMenu()">🛕 Popular Attractions</a>
+      <a href="javascript:void(0)" class="side-nav-item" onclick="showToast('Madhya Pradesh Tourism - The Heart of Incredible India', 'info'); closeSideMenu();">ℹ️ About MP Tourism</a>
+      <a href="javascript:void(0)" class="side-nav-item" onclick="showToast('Support Helpline: 1800-233-7777 (Toll Free)', 'info'); closeSideMenu();">📞 Contact Support</a>
+
+    </div>
+    <div class="side-menu-footer">
+      <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">
+        The Heart of Incredible India<br>
+        <strong>Official Tourism Portal</strong>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==========================================
+       HERO BANNER
+       ========================================== -->
+  <section class="hero-banner" style="position: relative; background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)), url('https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; padding: 5rem 1.5rem; text-align: center; color: white;">
+    <div class="container" style="max-width: 850px;">
+      <span style="background: rgba(255, 179, 0, 0.9); color: #212121; padding: 0.35rem 1rem; border-radius: 50px; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-bottom: 1rem;">
+        The Heart of Incredible India
+      </span>
+      <h1 style="font-size: clamp(2.2rem, 5vw, 3.5rem); color: #ffffff; margin-bottom: 1rem; text-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+        Discover Madhya Pradesh
+      </h1>
+      <p style="font-size: 1.15rem; color: #f0f0f0; margin-bottom: 2rem; font-weight: 400;">
+        From ancient Jyotirlingas in Ujjain & UNESCO Temples in Khajuraho to wild Tiger reserves in Kanha. Plan your custom journey with real-time budget calculation!
+      </p>
+
+      <!-- Category Filter Pills -->
+      <div class="category-pills" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.65rem; margin-top: 1.5rem;">
+        <button class="pill-btn active" onclick="filterCategory('ALL')" style="padding: 0.5rem 1.25rem; border-radius: 50px; border: none; font-weight: 600; cursor: pointer; background: var(--primary-orange); color: white;">All Places (20)</button>
+        <button class="pill-btn" onclick="filterCategory('Spiritual')" style="padding: 0.5rem 1.25rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.4); font-weight: 600; cursor: pointer; background: rgba(0,0,0,0.4); color: white;">🛕 Spiritual</button>
+        <button class="pill-btn" onclick="filterCategory('Heritage')" style="padding: 0.5rem 1.25rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.4); font-weight: 600; cursor: pointer; background: rgba(0,0,0,0.4); color: white;">🏰 Heritage</button>
+        <button class="pill-btn" onclick="filterCategory('Nature')" style="padding: 0.5rem 1.25rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.4); font-weight: 600; cursor: pointer; background: rgba(0,0,0,0.4); color: white;">🌲 Nature</button>
+        <button class="pill-btn" onclick="filterCategory('Wildlife')" style="padding: 0.5rem 1.25rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.4); font-weight: 600; cursor: pointer; background: rgba(0,0,0,0.4); color: white;">🐅 Wildlife</button>
+        <button class="pill-btn" onclick="filterCategory('Waterfall')" style="padding: 0.5rem 1.25rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.4); font-weight: 600; cursor: pointer; background: rgba(0,0,0,0.4); color: white;">🌊 Waterfalls</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       DESTINATIONS MAP & LIST SECTION
+       ========================================== -->
+  <main class="container" style="padding-top: 2.5rem; padding-bottom: 4rem;">
+    <!-- Section Header & Badge -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+      <div>
+        <h2 style="font-size: 1.85rem; display: flex; align-items: center; gap: 0.5rem;">
+          🗺️ Interactive Madhya Pradesh Map
+        </h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          Click any pin on the map to preview destination info, rating, and view full details.
+        </p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span id="locationsCountBadge" style="background: rgba(230, 81, 0, 0.1); color: var(--primary-orange); font-weight: 700; padding: 0.4rem 1rem; border-radius: 50px;">
+          Loading 20 Spots...
+        </span>
+      </div>
+    </div>
+
+    <!-- Leaflet Interactive Map Card -->
+    <div class="map-container-box" style="position: relative; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); margin-bottom: 2.5rem; background: var(--bg-card);">
+      <div id="mpMap" style="height: 480px; width: 100%; z-index: 1;"></div>
+      <!-- Map Legend Badge -->
+      <div style="position: absolute; bottom: 14px; right: 14px; z-index: 1000; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(8px); padding: 8px 14px; border-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 0.8rem; font-weight: 700; color: #212121; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(0,0,0,0.08);">
+        <span style="display: inline-block; width: 12px; height: 12px; background-color: #e65100; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.3);"></span>
+        <span>MP Tourist Pins (Click pin for popup)</span>
+      </div>
+    </div>
+
+    <!-- Secondary List Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+      <h3 style="font-size: 1.4rem; display: flex; align-items: center; gap: 0.5rem;">
+        📋 All Destinations
+      </h3>
+      <span id="matchingCountText" style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Showing 20 destinations</span>
+    </div>
+
+    <!-- Dynamic Location Cards Grid -->
+    <div class="grid-3" id="locationsGrid">
+      <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">⏳</div>
+        Connecting to MP Tourism Server... Loading 20 Destinations...
+      </div>
+    </div>
+  </main>
+
+  <!-- ==========================================
+       AUTH MODAL (LOGIN / SIGNUP)
+       ========================================== -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeAuthModal()">✕</button>
+      
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="loginTabBtn" onclick="switchAuthTab('login')">Login</div>
+        <div class="auth-tab" id="signupTabBtn" onclick="switchAuthTab('signup')">Sign Up</div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="loginEmail" placeholder="test@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-auth btn-primary-orange" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Login to Account</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signupForm" onsubmit="handleSignup(event)" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-control" id="signupFirstName" placeholder="John" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="signupLastName" placeholder="Doe" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="signupEmail" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp Number</label>
+          <input type="tel" class="form-control" id="signupWhatsapp" placeholder="9876543210" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="signupPassword" placeholder="Min 6 characters" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="signupConfirmPassword" placeholder="Re-enter password" required>
+        </div>
+        <button type="submit" class="btn-auth btn-primary-orange" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Shared API Client & AI Chat Widget -->
+  <script src="js/api.js"></script>
+  <script src="js/chat-widget.js"></script>
+
+  <!-- Page Logic Script -->
+  <script>
+    let allLocations = [];
+    let activeCategory = 'ALL';
+    let map = null;
+    let markersGroup = null;
+    let customOrangeIcon = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Restore saved theme preference if any
+      const savedTheme = localStorage.getItem('mpt_theme');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+
+      initMap();
+      fetchLocations();
+      checkAuthStatus();
+
+      // Search Filter Event
+      document.getElementById('homeSearchInput').addEventListener('input', (e) => {
+        filterLocations(e.target.value);
+      });
+
+      // Global click outside listener to close profile dropdown
+      document.addEventListener('click', (e) => {
+        const dropdown = document.getElementById('profileDropdownMenu');
+        const trigger = document.getElementById('profileTriggerBtn');
+        if (dropdown && dropdown.classList.contains('active')) {
+          if (!dropdown.contains(e.target) && !trigger.contains(e.target)) {
+            dropdown.classList.remove('active');
+          }
+        }
+      });
+    });
+
+    function initMap() {
+      if (map) return;
+
+      // Centered on MP state (approx lat 23.4716, lon 78.4329, zoom 7)
+      map = L.map('mpMap', {
+        scrollWheelZoom: true,
+        zoomControl: true
+      }).setView([23.4716, 78.4329], 7);
+
+      // OpenStreetMap Free Tile Layer (No API Key Required)
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        subdomains: 'abc',
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | MP Tourism'
+      }).addTo(map);
+
+      // Saffron/Orange Leaflet Pin Marker Icon
+      customOrangeIcon = L.divIcon({
+        className: 'custom-mp-marker',
+        html: `
+          <div style="
+            background: linear-gradient(135deg, #ff6d00 0%, #e65100 100%);
+            width: 32px;
+            height: 32px;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            border: 2px solid #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+          ">
+            <div style="
+              width: 10px;
+              height: 10px;
+              background-color: #ffffff;
+              border-radius: 50%;
+              transform: rotate(45deg);
+            "></div>
+          </div>
+        `,
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      });
+
+      markersGroup = L.featureGroup().addTo(map);
+      setTimeout(() => map.invalidateSize(), 300);
+    }
+
+    async function fetchLocations() {
+      const grid = document.getElementById('locationsGrid');
+      try {
+        allLocations = await API.getLocations();
+        document.getElementById('locationsCountBadge').innerText = `${allLocations.length} Tourist Destinations`;
+        renderLocations(allLocations);
+        updateMapMarkers(allLocations);
+      } catch (err) {
+        grid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--bg-card); border-radius: 14px; border: 1px solid var(--danger-color);">
+            <h3 style="color: var(--danger-color); margin-bottom: 0.5rem;">⚠️ Failed to Load Locations</h3>
+            <p style="color: var(--text-muted);">${err.message}</p>
+            <button onclick="fetchLocations()" class="btn-auth btn-primary-orange" style="margin-top: 1rem;">Retry Connection</button>
+          </div>
+        `;
+      }
+    }
+
+    function updateMapMarkers(locations) {
+      if (!map) initMap();
+      markersGroup.clearLayers();
+
+      if (!locations || locations.length === 0) return;
+
+      locations.forEach(loc => {
+        if (!loc.latitude || !loc.longitude) return;
+
+        const marker = L.marker([loc.latitude, loc.longitude], { icon: customOrangeIcon });
+
+        const popupHtml = `
+          <div style="width: 220px; font-family: 'Plus Jakarta Sans', sans-serif;">
+            <div style="position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 8px;">
+              <img src="${loc.imageUrl || 'https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=400&q=80'}" 
+                   alt="${loc.name}" 
+                   style="width: 100%; height: 115px; object-fit: cover; display: block;">
+              <span style="position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.75); color: #ffb300; font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 20px;">
+                ⭐ ${loc.rating || 4.8}/10
+              </span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+              <h4 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #212121; font-family: 'Outfit', sans-serif;">${loc.name}</h4>
+              <span style="background: rgba(230,81,0,0.12); color: #e65100; font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 12px;">${loc.category || 'Spot'}</span>
+            </div>
+            <p style="font-size: 0.78rem; color: #666; margin: 0 0 10px 0; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+              ${loc.shortDescription || 'Discover beautiful attractions, culture and heritage in MP.'}
+            </p>
+            <a href="place.html?id=${loc.id}&name=${encodeURIComponent(loc.name)}" 
+               style="display: block; text-align: center; background: linear-gradient(135deg, #ff6d00, #e65100); color: white; padding: 7px 12px; border-radius: 8px; text-decoration: none; font-size: 0.82rem; font-weight: 700; box-shadow: 0 2px 6px rgba(230,81,0,0.3);">
+              View Details & Plan Trip →
+            </a>
+          </div>
+        `;
+
+        marker.bindPopup(popupHtml, { maxWidth: 240 });
+
+        marker.on('click', () => {
+          const card = document.getElementById(`location-card-${loc.id}`);
+          if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            card.style.transform = 'scale(1.03)';
+            card.style.boxShadow = '0 0 20px rgba(230,81,0,0.4)';
+            setTimeout(() => {
+              card.style.transform = '';
+              card.style.boxShadow = '';
+            }, 2000);
+          }
+        });
+
+        markersGroup.addLayer(marker);
+      });
+
+      if (locations.length > 0 && locations.length < allLocations.length) {
+        map.fitBounds(markersGroup.getBounds().pad(0.15));
+      } else if (locations.length === allLocations.length) {
+        map.setView([23.4716, 78.4329], 7);
+      }
+    }
+
+    function renderLocations(locations) {
+      const grid = document.getElementById('locationsGrid');
+      if (!locations || locations.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--border-color);">No destinations match your filter.</div>`;
+        return;
+      }
+
+      grid.innerHTML = locations.map(loc => `
+        <div class="location-card" id="location-card-${loc.id}" onclick="window.location.href='place.html?id=${loc.id}&name=${encodeURIComponent(loc.name)}'">
+          <div class="card-img-wrapper">
+            <img src="${loc.imageUrl || 'https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=800&q=80'}" alt="${loc.name}" loading="lazy">
+            <span class="card-badge">${loc.category || 'Tourist Spot'}</span>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">${loc.name}</h3>
+            <p style="font-size: 0.8rem; color: var(--primary-orange); font-weight: 700; margin-bottom: 0.4rem;">${loc.tagline || 'Heart of MP'}</p>
+            <p class="card-desc">${loc.shortDescription || 'Discover beautiful attractions, culture and heritage.'}</p>
+            <div class="card-footer">
+              <span class="rating-tag">⭐ ${loc.rating || 4.8}/10</span>
+              <span style="font-size: 0.85rem; color: var(--primary-green); font-weight: 700;">Explore & Plan →</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterCategory(cat) {
+      activeCategory = cat;
+      document.querySelectorAll('.category-pills button').forEach(btn => {
+        if (btn.innerText.includes(cat) || (cat === 'ALL' && btn.innerText.includes('All'))) {
+          btn.style.background = 'var(--primary-orange)';
+          btn.style.borderColor = 'transparent';
+        } else {
+          btn.style.background = 'rgba(0,0,0,0.4)';
+          btn.style.borderColor = 'rgba(255,255,255,0.4)';
+        }
+      });
+
+      filterLocations(document.getElementById('homeSearchInput').value);
+    }
+
+    function filterLocations(searchQuery = '') {
+      const q = searchQuery.toLowerCase().trim();
+      const filtered = allLocations.filter(loc => {
+        const matchesCategory = (activeCategory === 'ALL') || 
+          (loc.category && loc.category.toLowerCase() === activeCategory.toLowerCase());
+        const matchesQuery = !q || 
+          loc.name.toLowerCase().includes(q) || 
+          (loc.shortDescription && loc.shortDescription.toLowerCase().includes(q));
+        return matchesCategory && matchesQuery;
+      });
+
+      renderLocations(filtered);
+      updateMapMarkers(filtered);
+      document.getElementById('matchingCountText').innerText = `Showing ${filtered.length} of ${allLocations.length} destinations`;
+    }
+
+    // Sidebar Control
+    function toggleSideMenu() {
+      document.getElementById('sideMenuOverlay').classList.toggle('active');
+      document.getElementById('sideMenuDrawer').classList.toggle('active');
+    }
+
+    function closeSideMenu() {
+      const overlay = document.getElementById('sideMenuOverlay');
+      const drawer = document.getElementById('sideMenuDrawer');
+      if (overlay) overlay.classList.remove('active');
+      if (drawer) drawer.classList.remove('active');
+    }
+
+    // Auth & Profile Status
+    function checkAuthStatus() {
+      const user = API.getCurrentUser();
+      const container = document.querySelector('.profile-menu-container');
+      if (user && API.isLoggedIn()) {
+        const avatarUrl = user.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80';
+        const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Valued User';
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+        container.innerHTML = `
+          <div class="user-profile-wrapper" style="position: relative;">
+            <button class="profile-trigger-btn" id="profileTriggerBtn" onclick="toggleProfileDropdown(event)">
+              <img src="${avatarUrl}" alt="${user.firstName}" class="profile-avatar" id="headerProfileAvatar">
+              <span class="profile-user-name">${user.firstName || 'Profile'}</span>
+              <span class="dropdown-arrow">▼</span>
+            </button>
+            <div class="profile-dropdown-menu" id="profileDropdownMenu">
+              <div class="dropdown-user-header">
+                <strong>${fullName}</strong>
+                <span style="font-size: 0.78rem; color: var(--text-muted);">${user.email || ''}</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <a href="javascript:void(0)" onclick="triggerUploadAvatar()" class="dropdown-item">📷 Upload Profile Image</a>
+              <a href="javascript:void(0)" onclick="editProfileModal()" class="dropdown-item">✏️ Edit Profile</a>
+              <a href="my-trips.html" class="dropdown-item">🧳 My Booked Trips</a>
+              <a href="javascript:void(0)" onclick="toggleTheme()" class="dropdown-item">
+                <span id="themeToggleLabel">${isDark ? '☀️ Light Theme' : '🌙 Dark Theme'}</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="javascript:void(0)" onclick="handleLogout()" class="dropdown-item dropdown-logout">🚪 Logout</a>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `<button class="btn-auth btn-outline" id="authNavBtn" onclick="openAuthModal()">👤 Login / Signup</button>`;
+      }
+    }
+
+    function toggleProfileDropdown(e) {
+      if (e) e.stopPropagation();
+      const dropdown = document.getElementById('profileDropdownMenu');
+      if (dropdown) dropdown.classList.toggle('active');
+    }
+
+    function handleLogout() {
+      API.logout();
+      showToast('Logged out successfully!', 'success');
+      checkAuthStatus();
+      setTimeout(() => window.location.reload(), 300);
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('mpt_theme', newTheme);
+      const label = document.getElementById('themeToggleLabel');
+      if (label) label.innerText = newTheme === 'dark' ? '☀️ Light Theme' : '🌙 Dark Theme';
+      showToast(`Switched to ${newTheme} theme`, 'info');
+    }
+
+    function triggerUploadAvatar() {
+      const url = prompt('Enter image URL for your profile avatar:', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80');
+      if (url && url.trim() !== '') {
+        const user = API.getCurrentUser() || {};
+        user.avatarUrl = url.trim();
+        setUser(user);
+        checkAuthStatus();
+        showToast('Profile image updated successfully!', 'success');
+      }
+    }
+
+    function editProfileModal() {
+      const user = API.getCurrentUser() || {};
+      const newName = prompt('Enter your First Name:', user.firstName || '');
+      if (newName !== null && newName.trim() !== '') {
+        user.firstName = newName.trim();
+        setUser(user);
+        checkAuthStatus();
+        showToast('Profile updated!', 'success');
+      }
+    }
+
+    // Modal Control
+    function openAuthModal() {
+      document.getElementById('authModal').classList.add('active');
+    }
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('active');
+    }
+    function switchAuthTab(tab) {
+      if (tab === 'login') {
+        document.getElementById('loginTabBtn').classList.add('active');
+        document.getElementById('signupTabBtn').classList.remove('active');
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('signupForm').style.display = 'none';
+      } else {
+        document.getElementById('signupTabBtn').classList.add('active');
+        document.getElementById('loginTabBtn').classList.remove('active');
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('signupForm').style.display = 'block';
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      try {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const res = await API.login({ email, password });
+        showToast(`Welcome back, ${res.firstName}!`, 'success');
+        closeAuthModal();
+        checkAuthStatus();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function handleSignup(e) {
+      e.preventDefault();
+      try {
+        const firstName = document.getElementById('signupFirstName').value;
+        const lastName = document.getElementById('signupLastName').value;
+        const email = document.getElementById('signupEmail').value;
+        const whatsapp = document.getElementById('signupWhatsapp').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+        if (password !== confirmPassword) {
+          showToast('Passwords do not match. Please try again.', 'error');
+          return;
+        }
+
+        const res = await API.signup({ firstName, lastName, email, whatsapp, password });
+        showToast(`Account created successfully! Welcome ${res.firstName}.`, 'success');
+        closeAuthModal();
+        checkAuthStatus();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html>
+

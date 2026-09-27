@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Options - MP Tourism</title>
+  <meta name="description" content="Select curated hotels matching your travel budget in Madhya Pradesh.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==========================================
+       GLOBAL APP HEADER
+       ========================================== -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-logo" onclick="window.location.href='index.html'">
+        <img src="https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=100&q=80" alt="MP Tourism Logo">
+        <span>MP TOURISM</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <a href="javascript:history.back()" style="font-weight: 600; color: var(--text-main);">← Back to Spot Suggestions</a>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       PAGE CONTAINER
+       ========================================== -->
+  <main class="container" style="padding-top: 2.5rem; padding-bottom: 4rem;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <span style="background: rgba(230, 81, 0, 0.1); color: var(--primary-orange); padding: 0.35rem 1rem; border-radius: 50px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">
+          Step 3 of 3 • Hotel Selection
+        </span>
+        <h1 style="font-size: 2rem; margin-top: 0.4rem; color: var(--text-main);">Curated Hotels Within Your Budget</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Select your preferred MP Tourism resort or budget hotel stay</p>
+      </div>
+
+      <button id="continuePaymentBtn" onclick="proceedToPayment()" class="btn-auth btn-primary-orange" style="padding: 0.85rem 2rem; font-size: 1rem; border-radius: 50px;">
+        Continue to Payment & Confirmation →
+      </button>
+    </div>
+
+    <!-- Hotels Table / Card List -->
+    <div id="hotelsList" style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <div style="text-align: center; padding: 3rem; background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border-color);">
+        ⏳ Loading hotel suggestions matching your remaining budget...
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Shared API Client & AI Chat Widget -->
+  <script src="js/api.js"></script>
+  <script src="js/chat-widget.js"></script>
+
+  <!-- Hotels Page Script -->
+  <script>
+    let currentTripId = null;
+    let selectedHotelId = null;
+    let availableHotels = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      currentTripId = urlParams.get('tripId');
+
+      if (!currentTripId) {
+        showToast('No trip ID specified. Redirecting to budget calculator...', 'error');
+        setTimeout(() => window.location.href = 'budget.html', 1500);
+        return;
+      }
+
+      loadSuggestedHotels();
+    });
+
+    async function loadSuggestedHotels() {
+      const container = document.getElementById('hotelsList');
+      try {
+        availableHotels = await API.getSuggestedHotels(currentTripId);
+        renderHotels(availableHotels);
+      } catch (err) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 3rem; background: var(--bg-card); border-radius: 14px; border: 1px solid var(--danger-color);">
+            <h3 style="color: var(--danger-color); margin-bottom: 0.5rem;">⚠️ Error Loading Hotel Suggestions</h3>
+            <p style="color: var(--text-muted);">${err.message}</p>
+            <button onclick="loadSuggestedHotels()" class="btn-auth btn-primary-orange" style="margin-top: 1rem;">Retry</button>
+          </div>
+        `;
+      }
+    }
+
+    function renderHotels(hotels) {
+      const container = document.getElementById('hotelsList');
+
+      if (!hotels || hotels.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <h3 style="margin-bottom: 0.5rem; color: var(--primary-orange);">No Hotels Match Remaining Budget</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Try removing some excursion spots to free up remaining budget for hotel accommodation.</p>
+            <a href="javascript:history.back()" class="btn-auth btn-outline">← Go Back to Adjust Spots</a>
+          </div>
+        `;
+        return;
+      }
+
+      // Default select first hotel
+      selectedHotelId = hotels[0].id;
+
+      container.innerHTML = hotels.map((h, idx) => {
+        const isSelected = h.id === selectedHotelId;
+        const amenitiesList = h.amenities ? h.amenities.split(',').map(a => a.trim()) : ['AC Rooms', 'WiFi', 'Restaurant'];
+        
+        return `
+          <div id="hotelCard_${h.id}" onclick="selectHotel(${h.id})" style="background: var(--bg-card); border-radius: var(--radius-md); border: 2px solid ${isSelected ? 'var(--primary-orange)' : 'var(--border-color)'}; padding: 1.5rem; box-shadow: ${isSelected ? 'var(--shadow-md)' : 'var(--shadow-sm)'}; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; justify-content: space-between; cursor: pointer; transition: var(--transition-fast);">
+            
+            <div style="display: flex; gap: 1.5rem; align-items: center; flex: 1; min-width: 300px;">
+              <input type="radio" name="hotelRadio" id="radio_${h.id}" ${isSelected ? 'checked' : ''} style="width: 20px; height: 20px; accent-color: var(--primary-orange);">
+              
+              <img src="${h.imageUrl || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80'}" alt="${h.hotelName}" style="width: 140px; height: 100px; border-radius: var(--radius-sm); object-fit: cover;">
+              
+              <div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.35rem;">
+                  <span style="font-weight: 800; color: #f57f17; font-size: 0.95rem;">⭐ ${h.rating || 8.5}/10 Rating</span>
+                </div>
+                <h3 style="font-size: 1.3rem; margin-bottom: 0.35rem; color: var(--text-main);">${h.hotelName}</h3>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem;">
+                  ${amenitiesList.map(a => `<span style="background: var(--bg-light); color: var(--text-muted); font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid var(--border-color);">✔ ${a}</span>`).join('')}
+                </div>
+              </div>
+            </div>
+
+            <div style="text-align: right; min-width: 160px;">
+              <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; display: block;">PRICE PER NIGHT</span>
+              <strong style="font-size: 1.35rem; color: var(--primary-orange);">₹${h.pricePerNight.toLocaleString()}</strong>
+              
+              <div style="margin-top: 0.5rem; background: rgba(46,125,50,0.1); color: var(--primary-green); padding: 0.35rem 0.75rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 700; display: inline-block;">
+                Total Stay: ₹${h.totalStayCost ? h.totalStayCost.toLocaleString() : h.pricePerNight.toLocaleString()}
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectHotel(hotelId) {
+      selectedHotelId = hotelId;
+      availableHotels.forEach(h => {
+        const card = document.getElementById(`hotelCard_${h.id}`);
+        const radio = document.getElementById(`radio_${h.id}`);
+        if (h.id === hotelId) {
+          card.style.borderColor = 'var(--primary-orange)';
+          card.style.boxShadow = 'var(--shadow-md)';
+          radio.checked = true;
+        } else {
+          card.style.borderColor = 'var(--border-color)';
+          card.style.boxShadow = 'var(--shadow-sm)';
+          radio.checked = false;
+        }
+      });
+    }
+
+    function proceedToPayment() {
+      if (!selectedHotelId) {
+        showToast('Please select a hotel to continue.', 'error');
+        return;
+      }
+      window.location.href = `payment.html?tripId=${currentTripId}&hotelId=${selectedHotelId}`;
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.innerHTML = `<span>${type === 'success' ? '✅' : '⚠️'}</span> <span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+  </script>
+</body>
+</html>
