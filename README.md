@@ -111,8 +111,10 @@ Mp_online_Hekathon/
      ./mvnw spring-boot:run
      ```
 
+   > 💡 **Fallback**: If the wrapper fails, install Maven and run: `mvn spring-boot:run`
+
 3. The backend server will start on **`http://localhost:8080/`**.
-   > ℹ️ *Upon launch, `DatabaseSeeder` automatically populates 20 MP tourist locations, nearby attractions, and hotels into the database.*
+   > ℹ️ *Upon launch, `DatabaseSeeder` automatically populates 20 MP tourist locations, nearby attractions, hotels, and the demo user into the database.*
 
 4. *(Optional)* H2 Console is available at **`http://localhost:8080/h2-console`**:
    - **JDBC URL**: `jdbc:h2:mem:mptourismdb`
@@ -161,8 +163,8 @@ The application is configured out-of-the-box for zero-config local development. 
 ## 🧪 Demo Credentials & Testing Workflow
 
 ### 1. Test Account Credentials
-- **Email**: `atulnath2909@gmail.com`
-- **Password**: `password123`
+- **Email**: `demo@mptourism.com`
+- **Password**: `Demo@123`
 
 *(You can also click **"Login / Signup"** in the top header to register a new user account instantly).*
 

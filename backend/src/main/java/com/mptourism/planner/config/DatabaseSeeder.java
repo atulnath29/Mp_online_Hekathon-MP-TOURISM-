@@ -3,9 +3,12 @@ package com.mptourism.planner.config;
 import com.mptourism.planner.model.Hotel;
 import com.mptourism.planner.model.Location;
 import com.mptourism.planner.model.NearbyPlace;
+import com.mptourism.planner.model.User;
 import com.mptourism.planner.repository.LocationRepository;
+import com.mptourism.planner.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +21,17 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Autowired
     private LocationRepository locationRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
+        seedDemoUser();
+
         if (locationRepository.count() > 0) {
             System.out.println(">>> DatabaseSeeder: Locations already seeded. Count = " + locationRepository.count() + ". Skipping seeding.");
             return;
@@ -400,4 +411,22 @@ public class DatabaseSeeder implements CommandLineRunner {
         }
         return loc;
     }
+
+    private void seedDemoUser() {
+        if (!userRepository.existsByEmail("demo@mptourism.com")) {
+            User demoUser = new User(
+                "Demo",
+                "User",
+                "demo@mptourism.com",
+                "9876543210",
+                passwordEncoder.encode("Demo@123"),
+                null
+            );
+            userRepository.save(demoUser);
+            System.out.println(">>> DatabaseSeeder: Seeded demo user demo@mptourism.com");
+        } else {
+            System.out.println(">>> DatabaseSeeder: Demo user demo@mptourism.com already exists.");
+        }
+    }
 }
+

@@ -10,7 +10,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ai-chat")
-@CrossOrigin(origins = "*")
 public class AiChatController {
 
     @Autowired

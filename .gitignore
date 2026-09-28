@@ -1,7 +1,6 @@
 # Compiled Java class files & build artifacts
 target/
 *.class
-*.jar
 *.war
 *.ear
 *.zip
@@ -10,7 +9,7 @@ target/
 
 # Maven Wrapper & binaries
 maven/
-.mvn/wrapper/maven-wrapper.jar
+
 
 # IDE & Editor specific files
 .vscode/
